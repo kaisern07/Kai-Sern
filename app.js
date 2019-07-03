@@ -37,46 +37,46 @@ app.post('/send', (req, res) => {
     <h3>Thank you !</h3>
   `;
    
-   const transports = [];
-   const directTransportOpts = {
-     pool: true,
-     direct: true, 
-     name: 'mail.example.com',
-     maxConnections: 5,
-     ratelimit: 5,
-   };
-   transports.push(nodemailer.createTransport(directTransport(directTransportOpts)));
-   transports.push[0].options = directTransportOpts;
+const transports = [];
+const directTransportOpts = {
+  pool: true,
+  direct: true, 
+  name: 'mail.example.com',
+  maxConnections: 5,
+  ratelimit: 5,
+  };
+transports.push(nodemailer.createTransport(directTransport(directTransportOpts)));
+transports.push[0].options = directTransportOpts;
 
-   // Private SMTP
-  transports.push(nodemailer.createTransport({
-  host: 'smtp.example.com',
-  auth: {
+// Private SMTP
+transports.push(nodemailer.createTransport({
+host: 'smtp.example.com',
+auth: {
     user: 'no-reply',
     pass: 'xxx'
   },
   }));
 
 // Hotmail SMTP
-  transports.push(nodemailer.createTransport({
-  host: 'smtp.live.com',
-  port: 587, 
-  secure : false, // true for 465, false for other ports
-  auth: {
+transports.push(nodemailer.createTransport({
+host: 'smtp.live.com',
+port: 587, 
+secure : false, // true for 465, false for other ports
+auth: {
     user: 'no-reply@mail.example.com',
     pass: 'xxx'
   },
-  }));
+}));
 
 // third party Mailing service (SparkPost as example)
-  transports.push(nodemailer.createTransport({
-  host: 'smtp.sparkpostmail.com',
-  port: 587,
-  auth: {
+transports.push(nodemailer.createTransport({
+host: 'smtp.sparkpostmail.com',
+port: 587,
+auth: {
     user: 'SMTP_Injection',
     pass: 'xxx'
   },
-  }));
+}));
 
   // setup email data with unicode symbols
   let mailOptions = {
@@ -92,7 +92,7 @@ app.post('/send', (req, res) => {
           return console.log(error);
       }
       console.log("The message was sent!");   
-      console.log(info);
+      console.log(info); //return message ID and status in console
 
       res.render('form', {msg:'Email has been sent successfully !'});
   });
