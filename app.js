@@ -3,7 +3,8 @@ const bodyParser = require('body-parser');
 const exphbs = require('express-handlebars');
 const path = require('path');
 const nodemailer = require('nodemailer');
-const smtpPool = require('nodemailer-smtp-pool');
+//const MailTime = require('mail-time');
+const directTransport = require('nodemailer-direct-transport');
 
 const app = express();
 
@@ -35,27 +36,48 @@ app.post('/send', (req, res) => {
     </ul>
     <h3>Thank you !</h3>
   `;
+   
+   const transports = [];
+   const directTransportOpts = {
+     pool: true,
+     direct: true, 
+     name: 'mail.example.com',
+     maxConnections: 5,
+     ratelimit: 5,
+   };
+   transports.push(nodemailer.createTransport(directTransport(directTransportOpts)));
+   transports.push[0].options = directTransportOpts;
 
-  // create reusable transporter object using the default SMTP transport
-  let transporter = nodemailer.createTransport(smtpPool({
-    host: 'smtp.YOURDOMAIN.com', //server name
-    port: 587,  
-    secure: false, // true for 465, false for other ports
-    auth: {
-        user: 'YOUR EMAIL', //email account
-        pass: 'YOUR PASSWORD' //email password
-    },
-    maxConnections: 5, // use up to 5 parallel connections
-    
-    maxMessages: 10, // do not send more than 10 messages per connection
-    
-    ratelimit: 5, // do not send more than 5 messages in a second
-  
-    tls:{
-      rejectUnauthorized:false
-        }
-   }));
-  
+   // Private SMTP
+  transports.push(nodemailer.createTransport({
+  host: 'smtp.example.com',
+  auth: {
+    user: 'no-reply',
+    pass: 'xxx'
+  },
+  }));
+
+// Hotmail SMTP
+  transports.push(nodemailer.createTransport({
+  host: 'smtp.live.com',
+  port: 587, 
+  secure : false, // true for 465, false for other ports
+  auth: {
+    user: 'no-reply@mail.example.com',
+    pass: 'xxx'
+  },
+  }));
+
+// third party Mailing service (SparkPost as example)
+  transports.push(nodemailer.createTransport({
+  host: 'smtp.sparkpostmail.com',
+  port: 587,
+  auth: {
+    user: 'SMTP_Injection',
+    pass: 'xxx'
+  },
+  }));
+
   // setup email data with unicode symbols
   let mailOptions = {
       from: '"YOUR NAME" <your@email.com>', // sender address
